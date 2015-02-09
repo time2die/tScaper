@@ -1,0 +1,2 @@
+# tScaper
+console web scraper
