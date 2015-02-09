@@ -71,6 +71,8 @@ public class PropertiesHolderTest {
     public void testWWWParam(){
         String [] args = {"http://ya.ru/"} ;
         holder = new PropertiesHolder(args);
+        Assert.assertEquals(holder.getUrl(),"http://ya.ru/") ;
+         
     }
 
 }
