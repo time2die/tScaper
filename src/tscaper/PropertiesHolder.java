@@ -108,6 +108,17 @@ public class PropertiesHolder {
 
     
     private void printUsageHelpAndThrowE(){
+        System.out.println("How to use rScaper ?");
+        System.out.println("java –jar tScraper.jar xxxx yyy,yyy –v –w –c –e");
+        System.out.println("where:");
+        System.out.println("xxxx - web site");
+        System.out.println("yyy,yyy - word or list of words");
+        System.out.println("-v for verbosity");
+        System.out.println("-w count number of provided word");
+        System.out.println("-c count number of character of each web page");
+        System.out.println("-e extract sentences’ which contain given words") ;
+        System.out.flush();
+        
         throw new IllegalArgumentException();
     }
     
