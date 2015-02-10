@@ -3,7 +3,9 @@ package tscaper;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * @author a.karpov
@@ -25,11 +27,17 @@ public class PropertiesHolder {
         }
 
         setUrl(args[0]) ;
-        //add parsing words
         
-        for(String iter : args){
+        for( int i = 1 ; i < args.length  ; i++){
+            String iter = args[i] ;
             if(iter.startsWith("-")){
                 fillFlags(iter);
+            }else{
+                if(words == null){
+                    parseWords(iter) ;
+                }else{
+                    printUsageHelpAndThrowE(); 
+                }
             }
         }
     }
@@ -63,6 +71,42 @@ public class PropertiesHolder {
         }
     }
     
+    private void parseWords(String param) {
+        if(param.indexOf(',') != -1){
+            StringTokenizer st = new StringTokenizer(param, ",") ;
+            while(st.hasMoreElements()){
+                processWord(st.nextToken().toLowerCase());
+            }
+        }else{
+            processWord(param);
+        }
+    }
+
+    
+    private void addWords(String iter) {
+        if(words == null){
+            words = new ArrayList<>() ;
+        }
+        words.add(iter) ;
+    }
+    
+    private void processWord(String param) {
+         if(isWord(param)){
+                    addWords(param) ;
+                }else{
+                    printUsageHelpAndThrowE(); 
+                }
+    }
+    /**
+     *  Is word alphabetic ?
+     * @param word 
+     * @return iter.matches("[a-z]+") && iter.length() > 1
+     */
+    protected static boolean isWord(String iter) {
+        return iter.matches("[a-z]+") && iter.length() > 1;
+    }
+
+    
     private void printUsageHelpAndThrowE(){
         throw new IllegalArgumentException();
     }
@@ -91,7 +135,5 @@ public class PropertiesHolder {
     public boolean isNeedExtracrSentences() {
         return needExtracrSentences;
     }
-
-
 
 }
