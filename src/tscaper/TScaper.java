@@ -1,24 +1,28 @@
 
 package tscaper;
 
-import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
 
 public class TScaper {
+    
+    public static void main(String[] args) {
+        PropertiesHolder propertiesHolder = new PropertiesHolder(args) ;
+        TScaper scaper = new TScaper(propertiesHolder) ;
+		
+    }
+    
+    static void countNumberOfCharactersIfNeed(String test, boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
    
     private TScaper(PropertiesHolder propertiesHolder) {
         String [] pages = download(propertiesHolder.getUrl()) ;
         processPages(pages,propertiesHolder) ;
     }
 
-    public static void main(String[] args) {
-        PropertiesHolder propertiesHolder = new PropertiesHolder(args) ;
-        TScaper scaper = new TScaper(propertiesHolder) ;
-		
-    }
-
+    
     private String[] download(String url) {
         String[] result = {"Content: Simple HTML generated on the fly (as string), embedded CSS 2.1, no JS.\n"
             + "\n"
@@ -36,7 +40,7 @@ public class TScaper {
 
     private void processPages(String[] pages, PropertiesHolder propertiesHolder) {
         countNumberOfWordsIfNeed(pages,propertiesHolder.isNeedCountCharactersNumber(), propertiesHolder.getWords());
-//        countNumberOfCharactersIfNeed(pages,propertiesHolder.isNeedCountCharactersNumber()) ;
+        countNumberOfCharactersIfNeed(pages,propertiesHolder.isNeedCountCharactersNumber()) ;
 //        extractSentencesIfNeed(pages,propertiesHolder.isNeedExtracrSentences()) ;
     }
 
@@ -62,8 +66,33 @@ public class TScaper {
     protected static String stringTokinaizerDelimeter = ":;()-*[]!@#$%^& 1234567890.,\n\t\\|" ;
     
     private static void incrementWordCountIfNeed(String wordFromPage, HashMap<String, Integer> wordsMap) {
-        if (wordsMap.containsKey(wordFromPage)) {
-            wordsMap.put(wordFromPage, wordsMap.get(wordFromPage) + 1);
+       
+    }
+    
+    //считает количество повторений определенных символов на странице.
+    protected static HashMap<Character,Integer> countNumberOfCharactersIfNeed(String[] pages, boolean needCountCharactersNumber) {
+        if(!needCountCharactersNumber || pages == null ){
+            return null;
         }
+        
+        HashMap<Character,Integer> result = new HashMap<>() ;
+        
+        for(String stringIter : pages){
+            for(char charIter : stringIter.toCharArray()){
+                if(!Character.isLetter(charIter)){
+                    continue; 
+                }
+                
+                charIter = Character.toLowerCase(charIter) ;
+                
+                if(result.containsKey(charIter)){
+                    result.put(charIter, result.get(charIter).intValue() +1) ;
+                }else{
+                    result.put(charIter, Integer.valueOf(1)) ;
+                }
+            }
+        }
+
+        return result ;
     }
 }
