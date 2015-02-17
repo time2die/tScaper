@@ -1,6 +1,8 @@
 package tscaper;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -32,5 +34,37 @@ public class TScaperTest {
 //        while(st.hasMoreTokens()){
 //            System.out.print('>'+ st.nextToken(TScaper.stringTokinaizerDelimeter).toLowerCase()+" ") ;
 //        }
-    }    
+    }
+    
+    
+    
+    @Test
+    public void testCountNumberOfWordsIfNeedNull(){
+        ArrayList<String> wordsToCount = new ArrayList<>() ;
+         HashMap<String,Integer> result =  TScaper.countNumberOfWordsIfNeed("".split(""), false , wordsToCount);
+         assertNull(result);
+         
+         result = TScaper.countNumberOfWordsIfNeed("".split(""), true , null);
+         assertNull(result);
+         
+        result = TScaper.countNumberOfWordsIfNeed(null, true , null);
+        assertNull(result);
+    }
+    
+    
+    @Test
+    public void testCountNumberOfWordsIfNeedSimple(){
+        ArrayList<String> wordsToCount = new ArrayList<>() ;
+        wordsToCount.add("one") ;
+        wordsToCount.add("two") ;
+        wordsToCount.add("three") ;
+        wordsToCount.add("fex") ;
+        
+        HashMap<String,Integer> result =  TScaper.countNumberOfWordsIfNeed(" :three; (one) |three\\ [two- .three, *two1234567890 fex] fex[ @fex% #fex$ &fex^".split(" "), true, wordsToCount ) ;
+        assertEquals(result.get("one"), Integer.valueOf(1));
+        assertEquals(result.get("two"), Integer.valueOf(2));
+        assertEquals(result.get("three"), Integer.valueOf(3));
+        assertEquals(result.get("fex"), Integer.valueOf(5));
+        
+    }
 }

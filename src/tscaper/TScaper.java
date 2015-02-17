@@ -1,6 +1,7 @@
 
 package tscaper;
 
+import com.sun.org.apache.xalan.internal.xsltc.runtime.BasisLibrary;
 import java.util.HashMap;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -58,7 +59,7 @@ public class TScaper {
         return wordsMap ;
     }
     
-    protected static String stringTokinaizerDelimeter = ":()- 1234567890.,\n\t" ;
+    protected static String stringTokinaizerDelimeter = ":;()-*[]!@#$%^& 1234567890.,\n\t\\|" ;
     
     private static void incrementWordCountIfNeed(String wordFromPage, HashMap<String, Integer> wordsMap) {
         if (wordsMap.containsKey(wordFromPage)) {
