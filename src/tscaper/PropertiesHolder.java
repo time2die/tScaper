@@ -13,7 +13,7 @@ import java.util.StringTokenizer;
 
 public class PropertiesHolder {
 
-    private String url = null ; 
+    private String [] urls = null ; 
     private List<String> words = null ;
     
     private boolean verbosity = false  ;
@@ -45,7 +45,8 @@ public class PropertiesHolder {
     private void setUrl(String arg) {
         try {
             URL siteURL = new URL(arg) ;
-            url = arg ;
+            urls = new String [1] ;
+            urls[0] = arg ;
         } catch (MalformedURLException ex) {
             printUsageHelpAndThrowE(); 
         }
@@ -123,8 +124,8 @@ public class PropertiesHolder {
     }
     
     
-      public String getUrl() {
-        return url;
+      public String [] getUrls() {
+        return urls;
     }
 
     public List<String> getWords() {

@@ -76,7 +76,7 @@ public class PropertiesHolderTest {
         String [] args = {yaru} ;
         holder = new PropertiesHolder(args);
         
-        Assert.assertEquals(holder.getUrl(),yaru) ;
+        Assert.assertEquals(holder.getUrls()[0],yaru) ;
     }
     
     @Test
@@ -141,7 +141,7 @@ public class PropertiesHolderTest {
         Assert.assertTrue(words.size() == 2);
         Assert.assertEquals("Greece".toLowerCase(), words.get(0));
         Assert.assertEquals("default", words.get(1));
-        Assert.assertEquals(yaru,holder.getUrl());
+        Assert.assertEquals(yaru,holder.getUrls()[0]);
         Assert.assertTrue(holder.isIsVerbosity());
         Assert.assertTrue(holder.isShowWordsOccurrence());
         Assert.assertTrue(holder.isNeedCountCharactersNumber());
