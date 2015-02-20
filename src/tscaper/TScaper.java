@@ -18,21 +18,22 @@ import javax.swing.text.html.parser.ParserDelegator;
 public class TScaper {
     private Date startTime = null ;
     
+      private TScaper(Date startTime) {
+        this.startTime = startTime ;
+    }
+    
     public static void main(String[] args) {
         Date startTime = new Date() ;
+        
         PropertiesHolder propertiesHolder = new PropertiesHolder(args) ;
         
         TScaper scaper = new TScaper(startTime) ;
         scaper.work(propertiesHolder) ;
     }
-
-    private TScaper(Date startTime) {
-        this.startTime = startTime ;
-    }
     
     private void work(PropertiesHolder propertiesHolder) {
-        List<String> pages = download(propertiesHolder.getUrls()) ;
-        processPages(pages,propertiesHolder) ;
+        List<String> pagesContent = download(propertiesHolder.getUrls()) ;
+        processPages(pagesContent,propertiesHolder) ;
         
         outputVerboseIfNeed(propertiesHolder);
     }
@@ -55,36 +56,25 @@ public class TScaper {
         }
         return results ;
     }
-    
-    public static String savePage(final String URL) throws IOException {
-    String line = "" ;
-    StringBuilder all = new StringBuilder();
-    URL myUrl = null;
-    BufferedReader in = null;
-    try {
-        myUrl = new URL(URL);
-        in = new BufferedReader(new InputStreamReader(myUrl.openStream()));
-
-        while ((line = in.readLine()) != null) {
-            all.append(line);
-        }
-    } finally {
-        if (in != null) {
-            in.close();
-        }
-    }
-
-    return all.toString();
-}
-
+  
     private void processPages(List<String> pages, PropertiesHolder propertiesHolder) {
-        Map<String,Integer>  wordCount = countNumberOfWordsIfNeed(pages,propertiesHolder.isNeedCountCharactersNumber(), propertiesHolder.getWords());
-        Map<Character,Integer> charCount = countNumberOfCharactersIfNeed(pages,propertiesHolder.isNeedCountCharactersNumber()) ;
-//        extractSentencesIfNeed(pages,propertiesHolder.isNeedExtracrSentences()) ;
+        Map<String,Map<String,Integer>> pageWordCountMap = new HashMap<> () ;
+        Map<String,Map<Character,Integer>> pageCharCountMap = new HashMap<>() ;
+        for(String page : pages){
+            Map<String,Integer>  wordCount = countNumberOfWordsIfNeed(page,propertiesHolder.isNeedCountCharactersNumber(), propertiesHolder.getWords());
+            Map<Character,Integer> charCount = countNumberOfCharactersIfNeed(page,propertiesHolder.isNeedCountCharactersNumber()) ;
+            
+            pageWordCountMap.put(page, wordCount) ;
+            pageCharCountMap.put(page, charCount) ;
+        }
+        
+        printWordInformationIfNeed(propertiesHolder, pageWordCountMap);
+        printCharCountMapIfNeed(propertiesHolder,pageCharCountMap);
+        
     }
 
-    protected static  Map<String, Integer> countNumberOfWordsIfNeed(List<String>  pages, boolean needCountCharactersNumber, List<String> words) {
-        if(!needCountCharactersNumber || pages == null || words == null || pages.isEmpty()){
+    protected static  Map<String, Integer> countNumberOfWordsIfNeed(String page, boolean needCountCharactersNumber, List<String> words) {
+        if(!needCountCharactersNumber || page == null || words == null ){
             return null;
         }
         
@@ -93,11 +83,9 @@ public class TScaper {
             wordsMap.put(iter, 0) ;
         }
         
-        for(String page : pages){
-            StringTokenizer st = new StringTokenizer(page) ;
-            while(st.hasMoreTokens()){
-                incrementWordCountIfNeed(st.nextToken(stringTokinaizerDelimeter).toLowerCase(), wordsMap);
-            }
+        StringTokenizer st = new StringTokenizer(page);
+        while (st.hasMoreTokens()) {
+            incrementWordCountIfNeed(st.nextToken(stringTokinaizerDelimeter).toLowerCase(), wordsMap);
         }
         return wordsMap ;
     }
@@ -111,30 +99,27 @@ public class TScaper {
     }
     
     //считает количество повторений определенных символов на странице.
-    protected static Map<Character,Integer> countNumberOfCharactersIfNeed(List<String> pages, boolean needCountCharactersNumber) {
-        if(!needCountCharactersNumber || pages == null || pages.isEmpty() ){
+    protected static Map<Character, Integer> countNumberOfCharactersIfNeed(String page, boolean needCountCharactersNumber) {
+        if (!needCountCharactersNumber) {
             return null;
         }
-        
-        HashMap<Character,Integer> result = new HashMap<>() ;
-        
-        for(String stringIter : pages){
-            for(char charIter : stringIter.toCharArray()){
-                if(!Character.isLetter(charIter)){
-                    continue; 
-                }
-                
-                charIter = Character.toLowerCase(charIter) ;
-                
-                if(result.containsKey(charIter)){
-                    result.put(charIter, result.get(charIter).intValue() +1) ;
-                }else{
-                    result.put(charIter, Integer.valueOf(1)) ;
-                }
+
+        HashMap<Character, Integer> result = new HashMap<>();
+
+        for (char charIter : page.toCharArray()) {
+            if (!Character.isLetter(charIter)) {
+                continue;
+            }
+
+            charIter = Character.toLowerCase(charIter);
+
+            if (result.containsKey(charIter)) {
+                result.put(charIter, result.get(charIter).intValue() + 1);
+            } else {
+                result.put(charIter, Integer.valueOf(1));
             }
         }
-
-        return result ;
+        return result;
     }
 
     private void setStartTime(Date startTime) {
@@ -148,6 +133,21 @@ public class TScaper {
         
         Date now = new Date() ;
         System.out.println("work: "+ (now.getTime() - startTime.getTime())+ " ms");
+    }
+
+    private void printWordInformationIfNeed(PropertiesHolder propertiesHolder, Map<String, Map<String, Integer>> pageWordCountMap) {
+        System.out.println("Word count information:");
+        for(String page : pageWordCountMap.keySet()){
+            Map<String,Integer> wordCounts = pageWordCountMap.get(page) ;
+            System.out.println("page: "+  page);
+            for(String word : wordCounts.keySet()){
+                System.out.println("word: "+ word +"\t time(s): "+ wordCounts.get(word));
+            }
+        }
+    }
+
+    private void printCharCountMapIfNeed(PropertiesHolder propertiesHolder, Map<String, Map<Character, Integer>> pageCharCountMap) {
+
     }
 
 
