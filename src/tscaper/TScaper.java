@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,17 +16,26 @@ import java.util.StringTokenizer;
 import javax.swing.text.html.parser.ParserDelegator;
 
 public class TScaper {
+    private Date startTime = null ;
     
     public static void main(String[] args) {
+        Date startTime = new Date() ;
         PropertiesHolder propertiesHolder = new PropertiesHolder(args) ;
-        TScaper scaper = new TScaper(propertiesHolder) ;
-		
-    }
-    private TScaper(PropertiesHolder propertiesHolder) {
-        List<String> pages = download(propertiesHolder.getUrls()) ;
-        processPages(pages,propertiesHolder) ;
+        
+        TScaper scaper = new TScaper(startTime) ;
+        scaper.work(propertiesHolder) ;
     }
 
+    private TScaper(Date startTime) {
+        this.startTime = startTime ;
+    }
+    
+    private void work(PropertiesHolder propertiesHolder) {
+        List<String> pages = download(propertiesHolder.getUrls()) ;
+        processPages(pages,propertiesHolder) ;
+        
+        outputVerboseIfNeed(propertiesHolder);
+    }
     
     private List<String> download(String[] urls) {
         LinkedList<String> results = new LinkedList<>() ;
@@ -126,4 +136,19 @@ public class TScaper {
 
         return result ;
     }
+
+    private void setStartTime(Date startTime) {
+        this.startTime = startTime ;
+    }
+
+    private void outputVerboseIfNeed(PropertiesHolder propertiesHolder) {
+        if(!propertiesHolder.isIsVerbosity()){
+            return  ;
+        }
+        
+        Date now = new Date() ;
+        System.out.println("work: "+ (now.getTime() - startTime.getTime())+ " ms");
+    }
+
+
 }
