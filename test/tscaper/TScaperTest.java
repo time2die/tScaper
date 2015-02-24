@@ -2,9 +2,7 @@ package tscaper;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -108,7 +106,7 @@ public class TScaperTest {
     
     @Test
     public void testMain() {
-        TScaper.main("http://google.com left,centr -v -w -c -e".split(" "));
+        TScaper.main("http://yandex.ru Погода,Пробки,Путин,Путину -v -w -c -e".split(" "));
     }
 
 }

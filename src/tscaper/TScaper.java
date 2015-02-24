@@ -6,6 +6,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -57,20 +59,17 @@ public class TScaper {
     }
   
     private void processPages(Map<String,String> pages, PropertiesHolder propertiesHolder) {
-        Map<String,Map<String,Integer>> pageWordCountMap = new HashMap<> () ;
-        Map<String,Map<Character,Integer>> pageCharCountMap = new HashMap<>() ;
         for(String urlIter : pages.keySet()){
             String page = pages.get(urlIter) ;
-            
             Map<String,Integer>  wordCount = countNumberOfWordsIfNeed(page,propertiesHolder.isNeedCountCharactersNumber(), propertiesHolder.getWords());
             Map<Character,Integer> charCount = countNumberOfCharactersIfNeed(page,propertiesHolder.isNeedCountCharactersNumber()) ;
             
-            pageWordCountMap.put(urlIter, wordCount) ;
-            pageCharCountMap.put(urlIter, charCount) ;
+            System.out.println("URL: "+ urlIter);
+            printWordInformationIfNeed(propertiesHolder, wordCount);
+            printCharCountMapIfNeed(propertiesHolder,page,charCount);
         }
         
-        printWordInformationIfNeed(propertiesHolder, pageWordCountMap);
-        printCharCountMapIfNeed(propertiesHolder,pageCharCountMap);
+
         
     }
 
@@ -133,23 +132,28 @@ public class TScaper {
         }
         
         Date now = new Date() ;
-        System.out.println("work: "+ (now.getTime() - startTime.getTime())+ " ms");
+        System.out.println("\n\nwork: "+ (now.getTime() - startTime.getTime())+ " ms");
     }
 
-    private void printWordInformationIfNeed(PropertiesHolder propertiesHolder, Map<String, Map<String, Integer>> pageWordCountMap) {
-        System.out.println("Word count information:");
-        for(String page : pageWordCountMap.keySet()){
-            Map<String,Integer> wordCounts = pageWordCountMap.get(page) ;
-            System.out.println("page: "+  page);
-            for(String word : wordCounts.keySet()){
-                System.out.println("word: "+ word +"\t time(s): "+ wordCounts.get(word));
+    private void printWordInformationIfNeed(PropertiesHolder propertiesHolder, Map<String, Integer> wordCount) {
+            for(String word : wordCount.keySet()){
+                System.out.println("word: "+ word +"\t time(s): "+ wordCount.get(word));
+            }
+
+    }
+
+    private void printCharCountMapIfNeed(PropertiesHolder propertiesHolder, String page, Map<Character, Integer> charCount) {
+        System.out.println("\npage lenght: "+ page.length());
+        List<Character> sortedList =  new LinkedList<>(charCount.keySet()) ;
+        Collections.sort(sortedList) ;
+        
+        int i = 0 ;
+        for(Character chIter  : sortedList ){
+            System.out.print(chIter+":"+ charCount.get(chIter)+"\t");        
+            if(i++ == 10){
+                i = 0 ;
+                System.out.println("");
             }
         }
     }
-
-    private void printCharCountMapIfNeed(PropertiesHolder propertiesHolder, Map<String, Map<Character, Integer>> pageCharCountMap) {
-
-    }
-
-
 }
