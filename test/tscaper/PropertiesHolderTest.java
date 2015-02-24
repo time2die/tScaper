@@ -32,24 +32,15 @@ public class PropertiesHolderTest {
         
         Assert.assertTrue(holder.isNeedCountCharactersNumber());
     }
-            
-    @Test
-    public void testEFlag(){
-        String [] args = {yaru,"-e"} ;
-        holder = new PropertiesHolder(args);
-       
-        Assert.assertTrue(holder.isNeedExtracrSentences());
-    }
         
     @Test
     public void testMixFlags(){
-        String [] args = {yaru,"-v","-w","-c","-e"} ;
+        String [] args = {yaru,"-v","-w","-c"} ;
         holder = new PropertiesHolder(args) ;
         
         Assert.assertTrue(holder.isIsVerbosity());
         Assert.assertTrue(holder.isShowWordsOccurrence());
         Assert.assertTrue(holder.isNeedCountCharactersNumber());
-        Assert.assertTrue(holder.isNeedExtracrSentences());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -134,7 +125,7 @@ public class PropertiesHolderTest {
     
     @Test
     public void testTaskArgs(){
-        String [] args = {yaru, "Greece,default", "-v", "-w" , "-c" , "-e"} ;
+        String [] args = {yaru, "Greece,default", "-v", "-w" , "-c" } ;
         holder = new PropertiesHolder(args) ;
         List<String> words = holder.getWords() ;
         
@@ -145,7 +136,6 @@ public class PropertiesHolderTest {
         Assert.assertTrue(holder.isIsVerbosity());
         Assert.assertTrue(holder.isShowWordsOccurrence());
         Assert.assertTrue(holder.isNeedCountCharactersNumber());
-        Assert.assertTrue(holder.isNeedExtracrSentences());
     }
     
     @Test(expected = IllegalArgumentException.class)

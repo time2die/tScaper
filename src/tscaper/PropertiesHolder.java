@@ -1,9 +1,14 @@
 
 package tscaper;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -19,7 +24,6 @@ public class PropertiesHolder {
     private boolean verbosity = false  ;
     private boolean showWordsOccurrence = false  ;
     private boolean needCountCharactersNumber = false ;
-    private boolean needExtracrSentences = false ;
     
     public  PropertiesHolder(String[] args) {
         if(args.length < 1 ){
@@ -43,12 +47,41 @@ public class PropertiesHolder {
     }
     
     private void setUrl(String arg) {
+        if (isUrl(arg)) {
+            urls = new String[1];
+            urls[0] = arg;
+        } else {
+            try {
+                List<String> t = readUrlsFromFile(arg) ;
+                urls = t.toArray(new String[ t.size() > 1? t.size() -1 : 1]) ;
+            } catch (IOException ex1 ) {
+                printUsageHelpAndThrowE();
+            }
+        }
+    }
+    
+    private boolean isUrl(String url){
         try {
-            URL siteURL = new URL(arg) ;
-            urls = new String [1] ;
-            urls[0] = arg ;
+            URL testURl = new URL(url) ;
+            return true ;
         } catch (MalformedURLException ex) {
-            printUsageHelpAndThrowE(); 
+            return false ;
+        }
+    }
+    
+     public List<String> readUrlsFromFile(String filePath) throws FileNotFoundException, IOException {
+        List<String> urls = null;
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
+            String sCurrentLine = null;
+            urls = new LinkedList<>();
+
+            while ((sCurrentLine = br.readLine()) != null) {
+                if(isUrl(sCurrentLine)){
+                    urls.add(sCurrentLine);
+                }
+            }
+
+            return urls;
         }
     }
     
@@ -63,12 +96,8 @@ public class PropertiesHolder {
             case "-c":
                 needCountCharactersNumber = true;
                 break;
-            case "-e":
-                needExtracrSentences = true;
-                break;
             default:
                 printUsageHelpAndThrowE();
-
         }
     }
     
@@ -124,7 +153,7 @@ public class PropertiesHolder {
         System.out.println("-e extract sentences’ which contain given words") ;
         System.out.flush();
         
-        throw new IllegalArgumentException();
+        throw new IllegalArgumentException("");
     }
     
     
@@ -146,10 +175,6 @@ public class PropertiesHolder {
 
     public boolean isNeedCountCharactersNumber() {
         return needCountCharactersNumber;
-    }
-
-    public boolean isNeedExtracrSentences() {
-        return needExtracrSentences;
     }
 
 }

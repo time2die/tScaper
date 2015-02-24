@@ -106,7 +106,7 @@ public class TScaperTest {
     
     @Test
     public void testMain() {
-        TScaper.main("http://yandex.ru Погода,Пробки,Путин,Путину -v -w -c -e".split(" "));
+        TScaper.main("http://lenta.ru Погода -w ".split(" "));
     }
-
-}
+ 
+} 

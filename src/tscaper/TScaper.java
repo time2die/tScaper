@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,12 +60,13 @@ public class TScaper {
     private void processPages(Map<String,String> pages, PropertiesHolder propertiesHolder) {
         for(String urlIter : pages.keySet()){
             String page = pages.get(urlIter) ;
-            Map<String,Integer>  wordCount = countNumberOfWordsIfNeed(page,propertiesHolder.isNeedCountCharactersNumber(), propertiesHolder.getWords());
+            Map<String,Integer>  wordCount = countNumberOfWordsIfNeed(page,propertiesHolder.isShowWordsOccurrence(), propertiesHolder.getWords());
             Map<Character,Integer> charCount = countNumberOfCharactersIfNeed(page,propertiesHolder.isNeedCountCharactersNumber()) ;
             
             System.out.println("URL: "+ urlIter);
             printWordInformationIfNeed(propertiesHolder, wordCount);
             printCharCountMapIfNeed(propertiesHolder,page,charCount);
+            System.out.println("---------------------------------------------\n\n");
         }
         
 
@@ -114,9 +114,9 @@ public class TScaper {
             charIter = Character.toLowerCase(charIter);
 
             if (result.containsKey(charIter)) {
-                result.put(charIter, result.get(charIter).intValue() + 1);
+                result.put(charIter, result.get(charIter) + 1);
             } else {
-                result.put(charIter, Integer.valueOf(1));
+                result.put(charIter, 1);
             }
         }
         return result;
@@ -136,17 +136,23 @@ public class TScaper {
     }
 
     private void printWordInformationIfNeed(PropertiesHolder propertiesHolder, Map<String, Integer> wordCount) {
-            for(String word : wordCount.keySet()){
-                System.out.println("word: "+ word +"\t time(s): "+ wordCount.get(word));
-            }
+        if (!propertiesHolder.isShowWordsOccurrence() || wordCount == null) {
+            return;
+        }
+        for (String word : wordCount.keySet()) {
+            System.out.println("word: " + word + "\t time(s): " + wordCount.get(word));
+        }
 
     }
 
     private void printCharCountMapIfNeed(PropertiesHolder propertiesHolder, String page, Map<Character, Integer> charCount) {
-        System.out.println("\npage lenght: "+ page.length());
+        if(!propertiesHolder.isNeedCountCharactersNumber() || charCount == null){
+            return ;
+        }
+        
         List<Character> sortedList =  new LinkedList<>(charCount.keySet()) ;
         Collections.sort(sortedList) ;
-        
+        System.out.println("");
         int i = 0 ;
         for(Character chIter  : sortedList ){
             System.out.print(chIter+":"+ charCount.get(chIter)+"\t");        
@@ -155,5 +161,6 @@ public class TScaper {
                 System.out.println("");
             }
         }
+        System.out.println("\ntotal page lenght: "+ page.length());
     }
 }
