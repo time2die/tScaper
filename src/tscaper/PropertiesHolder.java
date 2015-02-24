@@ -104,7 +104,11 @@ public class PropertiesHolder {
      * @return iter.matches("[a-z]+") && iter.length() > 1
      */
     protected static boolean isWord(String iter) {
-        return iter.matches("[a-z]+") && iter.length() > 1;
+        for(char charIter : iter.toCharArray())
+            if(!Character.isLetter(charIter)){
+                return false ;
+            }
+        return true ;
     }
 
     

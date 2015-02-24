@@ -1,7 +1,6 @@
 
 package tscaper;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -32,14 +31,14 @@ public class TScaper {
     }
     
     private void work(PropertiesHolder propertiesHolder) {
-        List<String> pagesContent = download(propertiesHolder.getUrls()) ;
+        Map<String,String> pagesContent = download(propertiesHolder.getUrls()) ;
         processPages(pagesContent,propertiesHolder) ;
         
         outputVerboseIfNeed(propertiesHolder);
     }
     
-    private List<String> download(String[] urls) {
-        LinkedList<String> results = new LinkedList<>() ;
+    private Map<String,String> download(String[] urls) {
+        HashMap<String,String> results = new HashMap<>() ;
         
         for (String urlIter : urls) {
             try {
@@ -48,7 +47,7 @@ public class TScaper {
                 Reader reader = new InputStreamReader(conn.getInputStream());
                 new ParserDelegator().parse(reader, parser, true);
                 
-                results.add(parser.getText()) ;
+                results.put(urlIter, parser.getText()) ;
             } catch (IOException e) {
                 System.err.println("url: "+ urlIter);
                 e.printStackTrace();
@@ -57,15 +56,17 @@ public class TScaper {
         return results ;
     }
   
-    private void processPages(List<String> pages, PropertiesHolder propertiesHolder) {
+    private void processPages(Map<String,String> pages, PropertiesHolder propertiesHolder) {
         Map<String,Map<String,Integer>> pageWordCountMap = new HashMap<> () ;
         Map<String,Map<Character,Integer>> pageCharCountMap = new HashMap<>() ;
-        for(String page : pages){
+        for(String urlIter : pages.keySet()){
+            String page = pages.get(urlIter) ;
+            
             Map<String,Integer>  wordCount = countNumberOfWordsIfNeed(page,propertiesHolder.isNeedCountCharactersNumber(), propertiesHolder.getWords());
             Map<Character,Integer> charCount = countNumberOfCharactersIfNeed(page,propertiesHolder.isNeedCountCharactersNumber()) ;
             
-            pageWordCountMap.put(page, wordCount) ;
-            pageCharCountMap.put(page, charCount) ;
+            pageWordCountMap.put(urlIter, wordCount) ;
+            pageCharCountMap.put(urlIter, charCount) ;
         }
         
         printWordInformationIfNeed(propertiesHolder, pageWordCountMap);

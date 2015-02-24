@@ -81,16 +81,16 @@ public class PropertiesHolderTest {
     
     @Test
         public void testSingleWord(){
-        Assert.assertEquals( true ,PropertiesHolder.isWord("word"));
-        Assert.assertEquals( true ,  PropertiesHolder.isWord("wweeeeeeeeeeeeeeeeeeeeeeeeeeryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyloooooooooooooooooonnnngword"));
+        Assert.assertEquals( true , PropertiesHolder.isWord("word"));
+        Assert.assertEquals( true , PropertiesHolder.isWord("wweeeeeeeeeeeeeeeeeeeeeeeeeeryyyyyyyyyyyyyyyyyyyyyyyyyyyyyyloooooooooooooooooonnnngword"));
         Assert.assertEquals( true,  PropertiesHolder.isWord("aa"));
-    
-        Assert.assertEquals( false ,  PropertiesHolder.isWord("a"));
+        Assert.assertEquals( true , PropertiesHolder.isWord("a"));
+        Assert.assertEquals( true , PropertiesHolder.isWord("CalmNottationWord"));
+        
         Assert.assertEquals( false ,PropertiesHolder.isWord(yaru)) ;
         Assert.assertEquals( false ,PropertiesHolder.isWord("1")) ;
         Assert.assertEquals( false ,PropertiesHolder.isWord("1a")) ;
         Assert.assertEquals( false ,PropertiesHolder.isWord("a2a")) ;
-        Assert.assertEquals( false , PropertiesHolder.isWord("CalmNottationWord"));
     }
     
     @Test
@@ -105,12 +105,12 @@ public class PropertiesHolderTest {
     
     @Test
     public void testDoubleWord() {
-        String [] args = {yaru, "news,breakennews"} ;
+        String [] args = {yaru, "новости,breakennews"} ;
         holder = new PropertiesHolder(args) ;
         List<String> words = holder.getWords() ;
         
         Assert.assertTrue(words.size() == 2);
-        Assert.assertEquals("news", words.get(0));
+        Assert.assertEquals("новости", words.get(0));
         Assert.assertEquals("breakennews", words.get(1));
     }
     
