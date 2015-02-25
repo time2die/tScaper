@@ -64,12 +64,12 @@ public class TScaper {
             Map<Character, Integer> charCount = countNumberOfCharactersIfNeed(page, propertiesHolder.isNeedCountCharactersNumber());
 
             System.out.println("URL: " + urlIter);
-            printWordInformationIfNeed(propertiesHolder, wordCount);
-            printCharCountMapIfNeed(propertiesHolder, page, charCount);
+            PrintUtils.printWordInformationIfNeed(propertiesHolder, wordCount);
+            PrintUtils.printCharCountMapIfNeed(propertiesHolder, page, charCount);
             System.out.println("---------------------------------------------\n\n");
             addToTotalResult(wordCount, charCount, propertiesHolder);
         }
-        printTotalResultIfNeed(propertiesHolder);
+        PrintUtils.printTotalResultIfNeed(propertiesHolder, totalWordCount, totalChar);
 
     }
 
@@ -133,53 +133,6 @@ public class TScaper {
 
         Date now = new Date();
         System.out.println("\n\nwork: " + (now.getTime() - startTime.getTime()) + " ms");
-    }
-
-    private void printWordInformationIfNeed(PropertiesHolder propertiesHolder, Map<String, Integer> wordCount) {
-        if (!propertiesHolder.isShowWordsOccurrence() || wordCount == null) {
-            return;
-        }
-        printWordMap(wordCount);
-    }
-
-    private void printWordMap(Map<String, Integer> wordCount) {
-        for (String word : wordCount.keySet()) {
-            System.out.println("word: " + word + "\t time(s): " + wordCount.get(word));
-        }
-    }
-
-    private void printCharCountMapIfNeed(PropertiesHolder propertiesHolder, String page, Map<Character, Integer> charCount) {
-        if (!propertiesHolder.isNeedCountCharactersNumber() || charCount == null) {
-            return;
-        }
-
-        printCharMap(charCount);
-        System.out.println("\ntotal page lenght: " + page.length());
-    }
-
-    private void printCharMap(Map<Character, Integer> charCount) {
-        List<Character> sortedList = new LinkedList<>(charCount.keySet());
-        Collections.sort(sortedList);
-        System.out.println("");
-        int i = 0;
-        for (Character chIter : sortedList) {
-            System.out.print(chIter + ":" + charCount.get(chIter) + "\t");
-            if (i++ == 10) {
-                i = 0;
-                System.out.println("");
-            }
-        }
-    }
-
-    private void printTotalResultIfNeed(PropertiesHolder propertiesHolder) {
-        System.out.println("Total result:");
-        if (propertiesHolder.isShowWordsOccurrence()) {
-            printWordMap(totalWordCount);
-        }
-
-        if (propertiesHolder.isNeedCountCharactersNumber()) {
-            printCharMap(totalChar);
-        }
     }
 
     private Map<String, Integer> totalWordCount;
