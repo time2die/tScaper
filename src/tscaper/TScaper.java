@@ -67,8 +67,9 @@ public class TScaper {
             printWordInformationIfNeed(propertiesHolder, wordCount);
             printCharCountMapIfNeed(propertiesHolder,page,charCount);
             System.out.println("---------------------------------------------\n\n");
+            addToTotalResult(wordCount,charCount,propertiesHolder) ;
         }
-        
+        printTotalResultIfNeed(propertiesHolder) ;
 
         
     }
@@ -92,7 +93,7 @@ public class TScaper {
     
     protected static String stringTokinaizerDelimeter = ":;()-*[]!@#$%^& 1234567890.,\n\t\\|" ;
     
-    private static void incrementWordCountIfNeed(String wordFromPage, HashMap<String, Integer> wordsMap) {
+    private static void incrementWordCountIfNeed(String wordFromPage, Map<String, Integer> wordsMap) {
          if (wordsMap.containsKey(wordFromPage)) {
             wordsMap.put(wordFromPage, wordsMap.get(wordFromPage) + 1);
         }
@@ -139,10 +140,13 @@ public class TScaper {
         if (!propertiesHolder.isShowWordsOccurrence() || wordCount == null) {
             return;
         }
+        printWordMap(wordCount);
+    }
+    
+    private void printWordMap(Map<String, Integer> wordCount){
         for (String word : wordCount.keySet()) {
             System.out.println("word: " + word + "\t time(s): " + wordCount.get(word));
         }
-
     }
 
     private void printCharCountMapIfNeed(PropertiesHolder propertiesHolder, String page, Map<Character, Integer> charCount) {
@@ -150,6 +154,11 @@ public class TScaper {
             return ;
         }
         
+        printCharMap(charCount);
+        System.out.println("\ntotal page lenght: "+ page.length());
+    }
+
+    private void printCharMap(Map<Character, Integer> charCount){
         List<Character> sortedList =  new LinkedList<>(charCount.keySet()) ;
         Collections.sort(sortedList) ;
         System.out.println("");
@@ -161,6 +170,47 @@ public class TScaper {
                 System.out.println("");
             }
         }
-        System.out.println("\ntotal page lenght: "+ page.length());
+    }
+
+    private void printTotalResultIfNeed(PropertiesHolder propertiesHolder) {
+        System.out.println("Total result:");
+        if (propertiesHolder.isShowWordsOccurrence()) {
+            printWordMap(totalWordCount);
+        }
+
+        if (propertiesHolder.isNeedCountCharactersNumber()) {
+            printCharMap(totalChar);
+        }
+    }
+
+    private Map<String,Integer> totalWordCount ;
+    private Map<Character,Integer> totalChar ;
+    private void addToTotalResult(Map<String, Integer> wordCount, Map<Character, Integer> charCount, PropertiesHolder propertiesHolder) {
+        if(propertiesHolder.isNeedCountCharactersNumber()){
+            if(totalWordCount == null){
+                totalWordCount = new HashMap<> () ;
+            }
+            for(String key : wordCount.keySet()){
+                if(totalWordCount.containsKey(key)){
+                    totalWordCount.put(key, totalWordCount.get(key) + wordCount.get(key)) ;
+                }else{
+                    totalWordCount.put(key, wordCount.get(key)) ;
+                }
+            }
+        }
+        
+        if(propertiesHolder.isShowWordsOccurrence()){
+            if(totalChar == null){
+                totalChar = new HashMap<>() ;
+            }
+
+            for(Character iter : charCount.keySet()){
+                if(totalChar.containsKey(iter)){
+                    totalChar.put(iter, totalChar.get(iter)+charCount.get(iter)) ;
+                }else{
+                    totalChar.put(iter, charCount.get(iter)) ;
+                }
+            }
+        }
     }
 }
