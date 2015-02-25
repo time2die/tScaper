@@ -101,7 +101,6 @@ public class TScaperTest {
         assertEquals(TScaper.countNumberOfCharactersIfNeed(testString, true).get('z'), Integer.valueOf(1));
     }
 
-    
     @Test
     public void testMain() {
         TScaper.main("http://lenta.ru новости,погода -w -c -v ".split(" "));

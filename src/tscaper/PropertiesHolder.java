@@ -1,4 +1,3 @@
-
 package tscaper;
 
 import java.io.BufferedReader;
@@ -15,68 +14,67 @@ import java.util.StringTokenizer;
 /**
  * @author a.karpov
  */
-
 public class PropertiesHolder {
 
-    private String [] urls = null ; 
-    private List<String> words = null ;
-    
-    private boolean verbosity = false  ;
-    private boolean showWordsOccurrence = false  ;
-    private boolean needCountCharactersNumber = false ;
-    
-    public  PropertiesHolder(String[] args) {
-        if(args.length < 1 ){
-            printUsageHelpAndThrowE(); 
+    private String[] urls = null;
+    private List<String> words = null;
+
+    private boolean verbosity = false;
+    private boolean showWordsOccurrence = false;
+    private boolean needCountCharactersNumber = false;
+
+    public PropertiesHolder(String[] args) {
+        if (args.length < 1) {
+            printUsageHelpAndThrowE();
         }
 
-        setUrl(args[0]) ;
-        
-        for( int i = 1 ; i < args.length  ; i++){
-            String iter = args[i] ;
-            if(iter.startsWith("-")){
+        setUrl(args[0]);
+
+        for (int i = 1; i < args.length; i++) {
+            String iter = args[i];
+            if (iter.startsWith("-")) {
                 fillFlags(iter);
-            }else{
-                if(words == null){
-                    parseWords(iter) ;
-                }else{
-                    printUsageHelpAndThrowE(); 
+            } else {
+                if (words == null) {
+                    parseWords(iter);
+                } else {
+                    printUsageHelpAndThrowE();
                 }
             }
         }
     }
-    
+
     private void setUrl(String arg) {
         if (isUrl(arg)) {
             urls = new String[1];
             urls[0] = arg;
         } else {
             try {
-                List<String> t = readUrlsFromFile(arg) ;
-                urls = t.toArray(new String[ t.size() > 1? t.size() -1 : 1]) ;
-            } catch (IOException ex1 ) {
+                List<String> t = readUrlsFromFile(arg);
+                urls = t.toArray(new String[t.size() > 1 ? t.size() - 1 : 1]);
+            } catch (IOException ex1) {
                 printUsageHelpAndThrowE();
             }
         }
     }
-    
-    private boolean isUrl(String url){
+
+    private boolean isUrl(String url) {
         try {
-            URL testURl = new URL(url) ;
-            return true ;
+            URL testURl = new URL(url);
+            return true;
         } catch (MalformedURLException ex) {
-            return false ;
+            return false;
         }
     }
-    
-     public List<String> readUrlsFromFile(String filePath) throws FileNotFoundException, IOException {
+
+    public List<String> readUrlsFromFile(String filePath) throws FileNotFoundException, IOException {
         List<String> urls = null;
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
             String sCurrentLine = null;
             urls = new LinkedList<>();
 
             while ((sCurrentLine = br.readLine()) != null) {
-                if(isUrl(sCurrentLine)){
+                if (isUrl(sCurrentLine)) {
                     urls.add(sCurrentLine);
                 }
             }
@@ -84,7 +82,7 @@ public class PropertiesHolder {
             return urls;
         }
     }
-    
+
     private void fillFlags(String iter) {
         switch (iter) {
             case "-v":
@@ -100,48 +98,49 @@ public class PropertiesHolder {
                 printUsageHelpAndThrowE();
         }
     }
-    
+
     private void parseWords(String param) {
-        if(param.indexOf(',') != -1){
-            StringTokenizer st = new StringTokenizer(param, ",") ;
-            while(st.hasMoreElements()){
+        if (param.indexOf(',') != -1) {
+            StringTokenizer st = new StringTokenizer(param, ",");
+            while (st.hasMoreElements()) {
                 processWord(st.nextToken().toLowerCase());
             }
-        }else{
+        } else {
             processWord(param);
         }
     }
 
-    
     private void addWords(String iter) {
-        if(words == null){
-            words = new ArrayList<>() ;
+        if (words == null) {
+            words = new ArrayList<>();
         }
-        words.add(iter) ;
+        words.add(iter);
     }
-    
+
     private void processWord(String param) {
-         if(isWord(param)){
-                    addWords(param) ;
-                }else{
-                    printUsageHelpAndThrowE(); 
-                }
+        if (isWord(param)) {
+            addWords(param);
+        } else {
+            printUsageHelpAndThrowE();
+        }
     }
+
     /**
-     *  Is word alphabetic ?
-     * @param word 
+     * Is word alphabetic ?
+     *
+     * @param word
      * @return iter.matches("[a-z]+") && iter.length() > 1
      */
     protected static boolean isWord(String iter) {
-        for(char charIter : iter.toCharArray())
-            if(!Character.isLetter(charIter)){
-                return false ;
+        for (char charIter : iter.toCharArray()) {
+            if (!Character.isLetter(charIter)) {
+                return false;
             }
-        return true ;
+        }
+        return true;
     }
 
-    
-    private void printUsageHelpAndThrowE(){
+    private void printUsageHelpAndThrowE() {
         System.out.println("How to use rScaper ?");
         System.out.println("java –jar tScraper.jar xxxx yyy,yyy –v –w –c –e");
         System.out.println("where:");
@@ -150,14 +149,13 @@ public class PropertiesHolder {
         System.out.println("-v for verbosity");
         System.out.println("-w count number of provided word");
         System.out.println("-c count number of character of each web page");
-        System.out.println("-e extract sentences’ which contain given words") ;
+        System.out.println("-e extract sentences’ which contain given words");
         System.out.flush();
-        
+
         throw new IllegalArgumentException("");
     }
-    
-    
-      public String [] getUrls() {
+
+    public String[] getUrls() {
         return urls;
     }
 

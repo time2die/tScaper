@@ -1,4 +1,3 @@
-
 package tscaper;
 
 import java.io.IOException;
@@ -16,89 +15,89 @@ import java.util.StringTokenizer;
 import javax.swing.text.html.parser.ParserDelegator;
 
 public class TScaper {
-    private Date startTime = null ;
-    
-      private TScaper(Date startTime) {
-        this.startTime = startTime ;
+
+    private Date startTime = null;
+
+    private TScaper(Date startTime) {
+        this.startTime = startTime;
     }
-    
+
     public static void main(String[] args) {
-        Date startTime = new Date() ;
-        
-        PropertiesHolder propertiesHolder = new PropertiesHolder(args) ;
-        
-        TScaper scaper = new TScaper(startTime) ;
-        scaper.work(propertiesHolder) ;
+        Date startTime = new Date();
+
+        PropertiesHolder propertiesHolder = new PropertiesHolder(args);
+
+        TScaper scaper = new TScaper(startTime);
+        scaper.work(propertiesHolder);
     }
-    
+
     private void work(PropertiesHolder propertiesHolder) {
-        Map<String,String> pagesContent = download(propertiesHolder.getUrls()) ;
-        processPages(pagesContent,propertiesHolder) ;
-        
+        Map<String, String> pagesContent = download(propertiesHolder.getUrls());
+        processPages(pagesContent, propertiesHolder);
+
         outputVerboseIfNeed(propertiesHolder);
     }
-    
-    private Map<String,String> download(String[] urls) {
-        HashMap<String,String> results = new HashMap<>() ;
-        
+
+    private Map<String, String> download(String[] urls) {
+        HashMap<String, String> results = new HashMap<>();
+
         for (String urlIter : urls) {
             try {
                 ParserTextUtil parser = new ParserTextUtil();
                 URLConnection conn = new URL(urlIter).openConnection();
                 Reader reader = new InputStreamReader(conn.getInputStream());
                 new ParserDelegator().parse(reader, parser, true);
-                
-                results.put(urlIter, parser.getText()) ;
+
+                results.put(urlIter, parser.getText());
             } catch (IOException e) {
-                System.err.println("url: "+ urlIter);
+                System.err.println("url: " + urlIter);
                 e.printStackTrace();
             }
         }
-        return results ;
+        return results;
     }
-  
-    private void processPages(Map<String,String> pages, PropertiesHolder propertiesHolder) {
-        for(String urlIter : pages.keySet()){
-            String page = pages.get(urlIter) ;
-            Map<String,Integer>  wordCount = countNumberOfWordsIfNeed(page,propertiesHolder.isShowWordsOccurrence(), propertiesHolder.getWords());
-            Map<Character,Integer> charCount = countNumberOfCharactersIfNeed(page,propertiesHolder.isNeedCountCharactersNumber()) ;
-            
-            System.out.println("URL: "+ urlIter);
+
+    private void processPages(Map<String, String> pages, PropertiesHolder propertiesHolder) {
+        for (String urlIter : pages.keySet()) {
+            String page = pages.get(urlIter);
+            Map<String, Integer> wordCount = countNumberOfWordsIfNeed(page, propertiesHolder.isShowWordsOccurrence(), propertiesHolder.getWords());
+            Map<Character, Integer> charCount = countNumberOfCharactersIfNeed(page, propertiesHolder.isNeedCountCharactersNumber());
+
+            System.out.println("URL: " + urlIter);
             printWordInformationIfNeed(propertiesHolder, wordCount);
-            printCharCountMapIfNeed(propertiesHolder,page,charCount);
+            printCharCountMapIfNeed(propertiesHolder, page, charCount);
             System.out.println("---------------------------------------------\n\n");
-            addToTotalResult(wordCount,charCount,propertiesHolder) ;
+            addToTotalResult(wordCount, charCount, propertiesHolder);
         }
-        printTotalResultIfNeed(propertiesHolder) ;
+        printTotalResultIfNeed(propertiesHolder);
 
-        
     }
 
-    protected static  Map<String, Integer> countNumberOfWordsIfNeed(String page, boolean needCountCharactersNumber, List<String> words) {
-        if(!needCountCharactersNumber || page == null || words == null ){
+    protected static Map<String, Integer> countNumberOfWordsIfNeed(String page, boolean needCountCharactersNumber, List<String> words) {
+        if (!needCountCharactersNumber || page == null || words == null) {
             return null;
         }
-        
-        HashMap<String,Integer> wordsMap = new HashMap<>();
-        for(String iter : words ){
-            wordsMap.put(iter, 0) ;
+
+        HashMap<String, Integer> wordsMap = new HashMap<>();
+        for (String iter : words) {
+            wordsMap.put(iter, 0);
         }
-        
+
         StringTokenizer st = new StringTokenizer(page);
         while (st.hasMoreTokens()) {
             incrementWordCountIfNeed(st.nextToken(stringTokinaizerDelimeter).toLowerCase(), wordsMap);
         }
-        return wordsMap ;
+        return wordsMap;
     }
-    
-    protected static String stringTokinaizerDelimeter = ":;()-*[]!@#$%^& 1234567890.,\n\t\\|" ;
-    
+
+    protected static String stringTokinaizerDelimeter = ":;()-*[]!@#$%^& 1234567890.,\n\t\\|";
+
     private static void incrementWordCountIfNeed(String wordFromPage, Map<String, Integer> wordsMap) {
-         if (wordsMap.containsKey(wordFromPage)) {
+        if (wordsMap.containsKey(wordFromPage)) {
             wordsMap.put(wordFromPage, wordsMap.get(wordFromPage) + 1);
         }
     }
-    
+
     //считает количество повторений определенных символов на странице.
     protected static Map<Character, Integer> countNumberOfCharactersIfNeed(String page, boolean needCountCharactersNumber) {
         if (!needCountCharactersNumber) {
@@ -124,16 +123,16 @@ public class TScaper {
     }
 
     private void setStartTime(Date startTime) {
-        this.startTime = startTime ;
+        this.startTime = startTime;
     }
 
     private void outputVerboseIfNeed(PropertiesHolder propertiesHolder) {
-        if(!propertiesHolder.isIsVerbosity()){
-            return  ;
+        if (!propertiesHolder.isIsVerbosity()) {
+            return;
         }
-        
-        Date now = new Date() ;
-        System.out.println("\n\nwork: "+ (now.getTime() - startTime.getTime())+ " ms");
+
+        Date now = new Date();
+        System.out.println("\n\nwork: " + (now.getTime() - startTime.getTime()) + " ms");
     }
 
     private void printWordInformationIfNeed(PropertiesHolder propertiesHolder, Map<String, Integer> wordCount) {
@@ -142,31 +141,31 @@ public class TScaper {
         }
         printWordMap(wordCount);
     }
-    
-    private void printWordMap(Map<String, Integer> wordCount){
+
+    private void printWordMap(Map<String, Integer> wordCount) {
         for (String word : wordCount.keySet()) {
             System.out.println("word: " + word + "\t time(s): " + wordCount.get(word));
         }
     }
 
     private void printCharCountMapIfNeed(PropertiesHolder propertiesHolder, String page, Map<Character, Integer> charCount) {
-        if(!propertiesHolder.isNeedCountCharactersNumber() || charCount == null){
-            return ;
+        if (!propertiesHolder.isNeedCountCharactersNumber() || charCount == null) {
+            return;
         }
-        
+
         printCharMap(charCount);
-        System.out.println("\ntotal page lenght: "+ page.length());
+        System.out.println("\ntotal page lenght: " + page.length());
     }
 
-    private void printCharMap(Map<Character, Integer> charCount){
-        List<Character> sortedList =  new LinkedList<>(charCount.keySet()) ;
-        Collections.sort(sortedList) ;
+    private void printCharMap(Map<Character, Integer> charCount) {
+        List<Character> sortedList = new LinkedList<>(charCount.keySet());
+        Collections.sort(sortedList);
         System.out.println("");
-        int i = 0 ;
-        for(Character chIter  : sortedList ){
-            System.out.print(chIter+":"+ charCount.get(chIter)+"\t");        
-            if(i++ == 10){
-                i = 0 ;
+        int i = 0;
+        for (Character chIter : sortedList) {
+            System.out.print(chIter + ":" + charCount.get(chIter) + "\t");
+            if (i++ == 10) {
+                i = 0;
                 System.out.println("");
             }
         }
@@ -183,32 +182,33 @@ public class TScaper {
         }
     }
 
-    private Map<String,Integer> totalWordCount ;
-    private Map<Character,Integer> totalChar ;
+    private Map<String, Integer> totalWordCount;
+    private Map<Character, Integer> totalChar;
+
     private void addToTotalResult(Map<String, Integer> wordCount, Map<Character, Integer> charCount, PropertiesHolder propertiesHolder) {
-        if(propertiesHolder.isNeedCountCharactersNumber()){
-            if(totalWordCount == null){
-                totalWordCount = new HashMap<> () ;
+        if (propertiesHolder.isNeedCountCharactersNumber()) {
+            if (totalWordCount == null) {
+                totalWordCount = new HashMap<>();
             }
-            for(String key : wordCount.keySet()){
-                if(totalWordCount.containsKey(key)){
-                    totalWordCount.put(key, totalWordCount.get(key) + wordCount.get(key)) ;
-                }else{
-                    totalWordCount.put(key, wordCount.get(key)) ;
+            for (String key : wordCount.keySet()) {
+                if (totalWordCount.containsKey(key)) {
+                    totalWordCount.put(key, totalWordCount.get(key) + wordCount.get(key));
+                } else {
+                    totalWordCount.put(key, wordCount.get(key));
                 }
             }
         }
-        
-        if(propertiesHolder.isShowWordsOccurrence()){
-            if(totalChar == null){
-                totalChar = new HashMap<>() ;
+
+        if (propertiesHolder.isShowWordsOccurrence()) {
+            if (totalChar == null) {
+                totalChar = new HashMap<>();
             }
 
-            for(Character iter : charCount.keySet()){
-                if(totalChar.containsKey(iter)){
-                    totalChar.put(iter, totalChar.get(iter)+charCount.get(iter)) ;
-                }else{
-                    totalChar.put(iter, charCount.get(iter)) ;
+            for (Character iter : charCount.keySet()) {
+                if (totalChar.containsKey(iter)) {
+                    totalChar.put(iter, totalChar.get(iter) + charCount.get(iter));
+                } else {
+                    totalChar.put(iter, charCount.get(iter));
                 }
             }
         }
