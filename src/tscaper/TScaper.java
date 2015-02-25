@@ -139,7 +139,7 @@ public class TScaper {
     private Map<Character, Integer> totalChar;
 
     private void addToTotalResult(Map<String, Integer> wordCount, Map<Character, Integer> charCount, PropertiesHolder propertiesHolder) {
-        if (propertiesHolder.isNeedCountCharactersNumber()) {
+        if (propertiesHolder.isShowWordsOccurrence()) {
             if (totalWordCount == null) {
                 totalWordCount = new HashMap<>();
             }
@@ -152,7 +152,8 @@ public class TScaper {
             }
         }
 
-        if (propertiesHolder.isShowWordsOccurrence()) {
+        if (propertiesHolder.isNeedCountCharactersNumber()) {
+
             if (totalChar == null) {
                 totalChar = new HashMap<>();
             }
