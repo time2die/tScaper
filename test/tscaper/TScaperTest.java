@@ -103,7 +103,9 @@ public class TScaperTest {
 
     @Test
     public void testMain() {
-        TScaper.main("http://lenta.ru новости,погода -w -c -v ".split(" "));
+        TScaper.main("http://lenta.ru новости,погода -w  ".split(" "));
+        TScaper.main("http://lenta.ru новости,погода -c  ".split(" "));
+        TScaper.main("http://lenta.ru новости,погода -v  ".split(" "));
     }
 
 }

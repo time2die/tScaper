@@ -70,7 +70,8 @@ public class TScaper {
             addToTotalResult(wordCount, charCount, propertiesHolder);
         }
         PrintUtils.printTotalResultIfNeed(propertiesHolder, totalWordCount, totalChar);
-
+        System.out.println("");
+        System.out.flush();
     }
 
     protected static Map<String, Integer> countNumberOfWordsIfNeed(String page, boolean needCountCharactersNumber, List<String> words) {
